@@ -12,7 +12,9 @@ const PORT = process.env.PORT || 3000;
 const server = http.createServer((req, res) => {
     if (req.url === '/generate') {
         const numbers = numbersArray();
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(200, { 'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+         });
         res.end(JSON.stringify(numbers));
     } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });

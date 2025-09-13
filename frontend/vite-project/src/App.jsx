@@ -5,31 +5,20 @@ import Button from './components/Button'
 import History from './components/History'
 import React from 'react'
 
-// function App() {
-
-//   const [mainDisplay, setMainDisplay] = React.useState("viewNumberDisplay");
-
-//   function configureMainDisplay() {
-//     setMainDisplay("viewHistory");
-//   }
-
-//   return (
-//     <>
-//       <Header />
-//       <NumberDisplay />
-//       <div className="button-div">
-//         <Button text="Generate" />
-//         <Button onClick={configureMainDisplay} text="View History"/>
-//       </div>
-//       <History />
-//     </>
-//   )
-// }
-
-// export default App
-
 function App() {
   const [mainDisplay, setMainDisplay] = React.useState("viewNumberDisplay");
+
+  const [numbers, setNumbers] = React.useState([]);
+
+  async function handleGenerate() {
+    try {
+      const response = await fetch('http://localhost:3001/generate');
+      const data = await response.json();
+      setNumbers(data);
+    } catch (err) {
+      console.error('Error fetching numbers:', err);
+    }
+  }
 
   return (
     <>
@@ -37,9 +26,14 @@ function App() {
 
       {mainDisplay === "viewNumberDisplay" ? (
         <>
-          <NumberDisplay />
+          <NumberDisplay 
+            numbers={numbers}
+          />
           <div className="button-div">
-            <Button text="Generate" />
+            <Button
+              onClick={handleGenerate} 
+              text="Generate" 
+            />
             <Button
               text="View History"
               onClick={() => setMainDisplay("viewHistory")}

@@ -5,5 +5,5 @@ export default function Number(props) {
     <span className={`number ${isRed ? "red" : ""}`}>
       {value}
     </span>
-  );
+  )
 }
