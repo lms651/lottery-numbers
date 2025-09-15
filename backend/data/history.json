@@ -1,26 +1,41 @@
 [
   {
-    "date_generated": "2025-09-14T23:55:29.415Z",
+    "id": 1757960784152,
+    "date_generated": "2025-09-15T18:26:24.152Z",
     "lottery_numbers": [
-      25,
-      37,
-      48,
-      55,
-      68
+      7,
+      19,
+      24,
+      52,
+      61
     ],
-    "power_ball": 16,
+    "power_ball": 12,
+    "is_deleted": true
+  },
+  {
+    "id": 1757961441168,
+    "date_generated": "2025-09-15T18:37:21.168Z",
+    "lottery_numbers": [
+      4,
+      27,
+      49,
+      56,
+      65
+    ],
+    "power_ball": 18,
     "is_deleted": false
   },
   {
-    "date_generated": "2025-09-14T23:57:34.414Z",
+    "id": 1757962044128,
+    "date_generated": "2025-09-15T18:47:24.129Z",
     "lottery_numbers": [
-      6,
-      11,
-      15,
-      18,
-      62
+      20,
+      27,
+      29,
+      34,
+      53
     ],
-    "power_ball": 20,
-    "is_deleted": false
+    "power_ball": 15,
+    "is_deleted": true
   }
 ]
