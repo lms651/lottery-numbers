@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "date_generated": "2025-09-14T23:55:29.415Z",
+    "lottery_numbers": [
+      25,
+      37,
+      48,
+      55,
+      68
+    ],
+    "power_ball": 16,
+    "is_deleted": false
+  },
+  {
+    "date_generated": "2025-09-14T23:57:34.414Z",
+    "lottery_numbers": [
+      6,
+      11,
+      15,
+      18,
+      62
+    ],
+    "power_ball": 20,
+    "is_deleted": false
+  }
+]
