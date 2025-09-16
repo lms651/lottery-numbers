@@ -1,111 +1,90 @@
-// import http from "http";           
-// import os from "node:os";
-// import dotenv from "dotenv";       
-// import { numbersArray } from './numbers/generateNumbers.js'
-// import { saveLotteryRecord } from './numbers/history.js'
-
-// dotenv.config();   
-
-// console.log('process.env.PORT =', process.env.PORT); // should print 3001
-
-// const PORT = process.env.PORT || 3000;
-
-// const server = http.createServer(async (req, res) => {
-//   if (req.url === '/generate') {
-//     const numbers = numbersArray();
-
-//     try {
-//       // save the record
-//       await saveLotteryRecord(numbers);
-//     } catch (err) {
-//       console.error("Error saving lottery record:", err);
-//       // optionally return a 500
-//       res.writeHead(500, { 'Content-Type': 'text/plain' });
-//       res.end('Server error');
-//       return;
-//     }
-
-//     // send numbers to frontend
-//     res.writeHead(200, {
-//       'Content-Type': 'application/json',
-//       'Access-Control-Allow-Origin': '*'
-//     });
-//     res.end(JSON.stringify(numbers));
-
-//   } else {
-//     res.writeHead(404, { 'Content-Type': 'text/plain' });
-//     res.end('Not Found');
-//   }
-// });
-
-// server.listen(PORT, () => {
-//     const rightNow = new Date();
-//     const machineName = os.hostname();
-
-//     console.log(`${rightNow} Server UP on ${machineName} listening on ${PORT}`);
-// })
-
 import http from "http";           
 import os from "node:os";
 import dotenv from "dotenv";       
 import { numbersArray } from './numbers/generateNumbers.js'
 import { saveLotteryRecord, loadHistory, deleteRecord } from './numbers/history.js'
+import Logger from "./logger.js";
 
 dotenv.config();   
 
 const PORT = process.env.PORT || 3000;
 
+/**
+ * Lottery Numbers HTTP Server
+ * 
+ * @scope public
+ * - Handles generating lottery numbers, saving them to history.json
+ * - Provides endpoints to load history and soft-delete records
+ * - Uses native Node http module, async FS operations, and CORS headers
+ */
+
 const server = http.createServer(async (req, res) => {
+  // CORS Headers
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // Handles DELETE requests from different frontend origin
+  if (req.method === "OPTIONS") {
+    res.writeHead(204);
+    return res.end();
+  }
+
   try {
-    // ------------------- GENERATE -------------------
+    /**
+     * GET /generate
+     * Generates a new lottery numbers array
+     * Saves record to history.json
+     * Returns numbers as JSON
+     */
     if (req.url === '/generate' && req.method === 'GET') {
       const numbers = numbersArray();
       await saveLotteryRecord(numbers);
 
-      res.writeHead(200, {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      });
+      res.writeHead(200, { 'Content-Type': 'application/json' });
       return res.end(JSON.stringify(numbers));
     }
 
-    // ------------------- GET HISTORY -------------------
+    /**
+     * GET /history
+     * Loads previously generated numbers
+     * Filters out records marked as deleted
+     * Returns JSON array
+     */
     if (req.url === '/history' && req.method === 'GET') {
-      const records = await loadHistory(); // returns only non-deleted
-      res.writeHead(200, {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      });
+      const records = await loadHistory();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
       return res.end(JSON.stringify(records));
     }
 
-    // ------------------- DELETE RECORD -------------------
+    /**
+     * DELETE /history/:id
+     * Soft deletes a record by ID (marks is_deleted = true)
+     * Returns { success: true } as JSON
+     */
     if (req.url.startsWith('/history/') && req.method === 'DELETE') {
       const id = req.url.split('/').pop();
-        console.log('DELETE request received for ID:', id); // <-- add this
+      Logger.info(`DELETE request received for ID: ${id}`);
 
-      await deleteRecord(id); // marks is_deleted = true
+      await deleteRecord(id);
 
-      res.writeHead(200, {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      });
+      res.writeHead(200, { 'Content-Type': 'application/json' });
       return res.end(JSON.stringify({ success: true }));
     }
 
-    // ------------------- NOT FOUND -------------------
+    // Not found
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not Found');
 
   } catch (err) {
-    console.error("Server error:", err);
+    Logger.error(`Server error: ${err.message}`, { stack: err.stack });
     res.writeHead(500, { 'Content-Type': 'text/plain' });
     res.end('Server error');
   }
-});
+})
 
 server.listen(PORT, () => {
   const rightNow = new Date();
   const machineName = os.hostname();
-  console.log(`${rightNow} Server UP on ${machineName} listening on ${PORT}`);
-});
+  Logger.info(`Server UP on ${machineName} listening on ${PORT}`);
+})

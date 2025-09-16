@@ -3,8 +3,6 @@ export default function Button(props) {
     const onClick = props.onClick;
 
   return (
-    <button className="button" onClick={onClick}>
-      {text}
-    </button>
-  );
+    <button className="button" onClick={onClick}>{text}</button>
+  )
 }

@@ -1,7 +1,8 @@
 import Number from "./Number"
 
-export default function NumberDisplay({ numbers = [] }) {
-  // empty placeholders
+export default function NumberDisplay(props) {
+  const numbers = props.numbers ?? [];
+
   const whiteBalls = numbers.slice(0, 5);
   const powerBall = numbers[5];
 
@@ -9,13 +10,13 @@ export default function NumberDisplay({ numbers = [] }) {
     <main>
       <div className="number-display">
         <div className="row">
-          {[0,1,2].map(i => (
-            <Number key={i} value={whiteBalls[i] ?? null} />
+          {[0,1,2].map(index => (
+            <Number key={index} value={whiteBalls[index] ?? null} />
           ))}
         </div>
         <div className="row">
-          {[3,4].map(i => (
-            <Number key={i} value={whiteBalls[i] ?? null} />
+          {[3,4].map(index => (
+            <Number key={index} value={whiteBalls[index] ?? null} />
           ))}
         </div>
         <div className="row">
@@ -23,5 +24,5 @@ export default function NumberDisplay({ numbers = [] }) {
         </div>
       </div>
     </main>
-  );
+  )
 }

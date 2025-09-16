@@ -118,6 +118,7 @@ main {
 }
 
 .history-back {
+  margin-bottom: 10px;
   display: flex;
   justify-content: center;
 }
@@ -125,11 +126,20 @@ main {
 h2 {
   display: flex;
   justify-content: center;
+  font-weight: 400;
 }
 
 table {
   border-collapse: collapse;
-  width: 100%;
+  width: 95%;
+  margin: 0 auto; 
+}
+
+@media (max-width: 576px) {
+  table {
+    width: 90%;       
+    margin: 10px auto;
+  }
 }
 
 th, td {
@@ -139,11 +149,25 @@ th, td {
 }
 
 tr:nth-child(even) {
-  background-color: #f2f2f2; /* striped effect */
+  background-color: #f2f2f2; 
 }
 
 th {
   background-color: rgb(58, 53, 49);
   color: white;
   font-weight: 400;
+}
+
+.history-table .delete-btn {
+  color: #ff4d4f;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bolder;
+}
+
+.history-table .delete-btn:hover {
+  color: #b20a07;
 }

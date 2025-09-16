@@ -1,25 +1,29 @@
-// handles fs functions
-
 import { readFile, writeFile } from 'node:fs/promises';
 
 const DATA_FILE = './data/history.json';
 
+/**
+ * Persists Generated Lottery Numbers
+ * 
+ * @scope private
+ * @param {Array} numbers An array of 6 integers (first 5 are lottery numbers, last is Powerball)
+ * @returns {Object} newRecord object stored to history.json
+ */
+
 export async function saveLotteryRecord(numbers) {
-  // numbers: array of 6 numbers (first 5 white, last is powerball)
   const newRecord = {
     id: Date.now(),
     date_generated: new Date().toISOString(),
     lottery_numbers: numbers.slice(0,5),
     power_ball: numbers[5],
     is_deleted: false
-  };
+  }
 
   let existingData = [];
   try {
     const fileContent = await readFile(DATA_FILE, 'utf8');
     existingData = JSON.parse(fileContent);
   } catch (err) {
-    // If file doesn’t exist yet, start empty
     if (err.code !== 'ENOENT') throw err;
   }
 
@@ -29,6 +33,14 @@ export async function saveLotteryRecord(numbers) {
   return newRecord;
 }
 
+/**
+ * Loads saved lottery numbers from history.json
+ * 
+ * @scope private
+ * @param none
+ * @returns {Array<Object>} Array of record objects that are not marked as deleted
+ */
+
 export async function loadHistory() {
   let existingData = [];
 
@@ -36,7 +48,6 @@ export async function loadHistory() {
     const fileContent = await readFile(DATA_FILE, 'utf8');
     existingData = JSON.parse(fileContent);
   } catch (err) {
-    // If file doesn’t exist yet, start empty
     if (err.code !== 'ENOENT') throw err;
   }
 
@@ -46,28 +57,13 @@ export async function loadHistory() {
   return displayData;
 }
 
-// returns void
-// deleteRecord(id) should locate the record by id and set is_deleted = true, then write back to the JSON file.
-
-// export async function deleteRecord(recordId) {
-//   let existingData = [];
-
-//   try {
-//     const fileContent = await readFile(DATA_FILE, 'utf8'); 
-//     existingData = JSON.parse(fileContent);
-//   } catch (err) {
-//     if (err.code !== 'ENOENT') throw err;
-//   }
-
-//   // find the record by id and mark as deleted
-//   const index = existingData.findIndex(r => r.id === recordId);
-//   if (index !== -1) {
-//     existingData[index].is_deleted = true;
-
-//     // write updated array back to file
-//     await writeFile(DATA_FILE, JSON.stringify(existingData, null, 2), 'utf8');
-//   }
-// }
+/**
+ * Marks a lottery record in history.json as deleted (soft delete)
+ * 
+ * @scope private
+ * @param {string} recordId - The ID of the record to mark deleted from URL
+ * @returns {Promise<void>} Resolves once the record is marked deleted and the file is updated
+ */
 
 export async function deleteRecord(recordId) {
   let existingData = [];
@@ -79,7 +75,7 @@ export async function deleteRecord(recordId) {
     if (err.code !== 'ENOENT') throw err;
   }
 
-  // Convert id to number because Date.now() gave numeric IDs
+  // Convert id to number
   const idNum = Number(recordId);
 
   // Find record and mark it deleted
@@ -90,7 +86,6 @@ export async function deleteRecord(recordId) {
     }
   }
 
-
-  // Write updated array back to file
+  // Write updated array back to history.json
   await writeFile(DATA_FILE, JSON.stringify(existingData, null, 2), 'utf8');
 }
